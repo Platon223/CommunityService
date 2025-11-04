@@ -3,10 +3,13 @@ from .models import Community
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.http import JsonResponse, HttpResponseBadRequest
+from .serializer import CommunitySerializer
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 # Create your views here.
 
-@csrf_exempt
+@api_view(["GET"])
 def find_community(request):
     try:
         unicode = request.body.decode('utf-8')
@@ -19,11 +22,21 @@ def find_community(request):
         
         community = Community.objects.get(pk=community_id)
 
-        return JsonResponse({"message": f"community found: {community.name}"})
+        serializer = CommunitySerializer(community)
+
+        return Response(serializer.data)
     except json.JSONDecodeError:
         return HttpResponseBadRequest("Invalid JSON")
     except Exception as e:
         return HttpResponseBadRequest(f"Error occured: {e}")
 
+@api_view(["POST"])
+def create_community(request):
+    serializer = CommunitySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "success"}, status=200)
+    return Response({"message": f"error occured: {serializer.errors}"}, status=400)
+    
 
 
