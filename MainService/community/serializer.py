@@ -8,6 +8,7 @@ class CommunitySerializer(serializers.Serializer):
     private = serializers.BooleanField()
     members = serializers.IntegerField()
     publish_date = serializers.DateField()
+    creator_id = serializers.CharField()
 
     def create(self, data):
         data["id"] = 'generate_id'

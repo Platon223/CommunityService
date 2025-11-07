@@ -24,7 +24,7 @@ def find_community(request):
 
         serializer = CommunitySerializer(community)
 
-        return Response(serializer.data)
+        return JsonResponse(serializer.data)
     except json.JSONDecodeError:
         return HttpResponseBadRequest("Invalid JSON")
     except Exception as e:
@@ -35,8 +35,28 @@ def create_community(request):
     serializer = CommunitySerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response({"message": "success"}, status=200)
-    return Response({"message": f"error occured: {serializer.errors}"}, status=400)
+        return JsonResponse({"message": "success"}, status=200)
+    return JsonResponse({"message": f"error occured: {serializer.errors}"}, status=400)
+
+@api_view(["POST"])
+def join_community(request):
+    json_data = request.data
+    comm_id = json_data.get("comm_id")
+    user_username = getattr(request, "username", None)
+
+    community = Community.objects.get(pk=comm_id)
+    community_creator_id = community.creator_id
+
+    # Send a message to the queue for the auth service
+
+    return JsonResponse({"message": f"notification sent to: {community_creator_id}, {user_username} is waiting for response"})
+
+
+
+
+
+
+
     
 
 

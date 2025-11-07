@@ -15,7 +15,7 @@ class JWTAuthMiddleware:
         actk = actk_header.split(" ")[1]
         try:
             payload = jwt.decode(actk, settings.SECRET_JWT_KEY, algorithms=["HS256"])
-            request.user_payload = payload
+            request.username = payload.get("sub")
         except (InvalidTokenError, DecodeError):
             return JsonResponse({"message": "Token is invalid or expired"}, status=401)
         

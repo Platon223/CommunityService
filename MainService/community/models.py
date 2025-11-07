@@ -8,6 +8,7 @@ class Community(models.Model):
     private = models.BooleanField()
     members = models.IntegerField()
     publish_date = models.DateField()
+    creator_id = models.TextField()
 
     def __str__(self):
         return self.id
