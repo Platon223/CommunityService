@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .models import Community
 
 
 class CommunitySerializer(serializers.Serializer):
@@ -7,4 +8,9 @@ class CommunitySerializer(serializers.Serializer):
     private = serializers.BooleanField()
     members = serializers.IntegerField()
     publish_date = serializers.DateField()
+
+    def create(self, data):
+        data["id"] = 'generate_id'
+
+        return Community.objects.create(**data)
 
